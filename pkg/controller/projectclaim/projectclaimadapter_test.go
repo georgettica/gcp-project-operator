@@ -17,8 +17,8 @@ import (
 	gcpv1alpha1 "github.com/openshift/gcp-project-operator/pkg/apis/gcp/v1alpha1"
 	"github.com/openshift/gcp-project-operator/pkg/controller/projectclaim"
 	. "github.com/openshift/gcp-project-operator/pkg/controller/projectclaim"
-	"github.com/openshift/gcp-project-operator/pkg/util/mocks"
 	mockconditions "github.com/openshift/gcp-project-operator/pkg/util/mocks/condition"
+	"github.com/openshift/gcp-project-operator/pkg/util/mocks/k8sclient"
 	testStructs "github.com/openshift/gcp-project-operator/pkg/util/mocks/structs"
 	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 )
@@ -27,8 +27,8 @@ var _ = Describe("Customresourceadapter", func() {
 	var (
 		adapter          CustomResourceAdapter
 		mockCtrl         *gomock.Controller
-		mockClient       *mocks.MockClient
-		mockStatusWriter *mocks.MockStatusWriter
+		mockClient       *k8sclient.MockClient
+		mockStatusWriter *k8sclient.MockStatusWriter
 		projectClaim     *gcpv1alpha1.ProjectClaim
 		mockConditions   *mockconditions.MockConditions
 	)
@@ -36,9 +36,9 @@ var _ = Describe("Customresourceadapter", func() {
 	BeforeEach(func() {
 		projectClaim = testStructs.NewProjectClaimBuilder().Initialized().GetProjectClaim()
 		mockCtrl = gomock.NewController(GinkgoT())
-		mockClient = mocks.NewMockClient(mockCtrl)
+		mockClient = k8sclient.NewMockClient(mockCtrl)
 		mockConditions = mockconditions.NewMockConditions(mockCtrl)
-		mockStatusWriter = mocks.NewMockStatusWriter(mockCtrl)
+		mockStatusWriter = k8sclient.NewMockStatusWriter(mockCtrl)
 	})
 	JustBeforeEach(func() {
 		adapter = NewProjectClaimAdapter(projectClaim, logf.Log.WithName("Test Logger"), mockClient, mockConditions)

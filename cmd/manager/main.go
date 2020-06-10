@@ -16,9 +16,10 @@ import (
 	"github.com/operator-framework/operator-sdk/pkg/leader"
 	"github.com/operator-framework/operator-sdk/pkg/log/zap"
 	"github.com/operator-framework/operator-sdk/pkg/metrics"
-	"github.com/operator-framework/operator-sdk/pkg/restmapper"
 	sdkVersion "github.com/operator-framework/operator-sdk/version"
 	"github.com/spf13/pflag"
+	v1 "k8s.io/api/core/v1"
+
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
@@ -87,8 +88,8 @@ func run() error {
 
 	// Create a new Cmd to provide shared dependencies and start components
 	mgr, err := manager.New(cfg, manager.Options{
-		Namespace:          "", //watch all namespaces
-		MapperProvider:     restmapper.NewDynamicRESTMapper,
+		Namespace: "", //watch all namespaces
+		//MapperProvider:     apiutil.NewDynamicRESTMapper,
 		MetricsBindAddress: fmt.Sprintf("%s:%d", metricsHost, metricsPort),
 	})
 	if err != nil {
@@ -111,9 +112,18 @@ func run() error {
 	}
 
 	// Create Service object to expose the metrics port.
-	_, err = metrics.ExposeMetricsPort(ctx, metricsPort)
+	// Populate below with the Service(s) for which you want to create ServiceMonitors.
+	services := []*v1.Service{}
+	// Create one ServiceMonitor per application per namespace.
+	// Change the below value to name of the Namespace you want the ServiceMonitor to be created in.
+	ns := ""
+	// restConfig is used for talking to the Kubernetes apiserver
+	restConfig := cfg
+
+	// Pass the Service(s) to the helper function, which in turn returns the array of ServiceMonitor objects.
+	_, err = metrics.CreateServiceMonitors(restConfig, ns, services)
 	if err != nil {
-		log.V(logtypes.OperatorSDK).Info(err.Error())
+		// Handle errors here.
 	}
 
 	// start cache and wait for sync
