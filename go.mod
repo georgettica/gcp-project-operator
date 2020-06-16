@@ -18,21 +18,31 @@ require (
 	google.golang.org/api v0.14.0
 	k8s.io/api v0.18.2
 	k8s.io/apimachinery v0.18.2
-	k8s.io/client-go v12.0.0+incompatible
+	//	k8s.io/client-go v12.0.0+incompatible
 	k8s.io/code-generator v0.18.2
 	k8s.io/gengo v0.0.0-20200114144118-36b2048a9120
 	k8s.io/kube-openapi v0.0.0-20200427153329-656914f816f9
-	sigs.k8s.io/controller-runtime v0.6.0
 	sigs.k8s.io/controller-tools v0.3.0
 )
 
 replace (
-	github.com/Azure/go-autorest => github.com/Azure/go-autorest v13.3.2+incompatible // Required by OLM
 	github.com/coreos/prometheus-operator => github.com/coreos/prometheus-operator v0.38.1-0.20200424145508-7e176fda06cc
-	k8s.io/client-go => k8s.io/client-go v0.18.2
 	k8s.io/code-generator => k8s.io/code-generator v0.0.0-20181117043124-c2090bec4d9b
 	k8s.io/kube-openapi => k8s.io/kube-openapi v0.0.0-20180711000925-0cf8f7e6ed1d
 
+)
+
+// Pin to operator-sdk version 0.18.1
+// created by `operator-sdk print-deps`
+// relates to the the following two sections
+require (
+	k8s.io/client-go v12.0.0+incompatible
+	sigs.k8s.io/controller-runtime v0.6.0
+)
+
+replace (
+	github.com/Azure/go-autorest => github.com/Azure/go-autorest v13.3.2+incompatible // Required by OLM
+	k8s.io/client-go => k8s.io/client-go v0.18.2 // Required by prometheus-operator
 )
 
 // Pin google api to v0.11.0
