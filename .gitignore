@@ -80,3 +80,5 @@ tags
 key.json
 config.source
 /secrets
+
+bin
