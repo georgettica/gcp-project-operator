@@ -25,17 +25,18 @@ import (
 
 // ProjectClaimSpec defines the desired state of ProjectClaim
 type ProjectClaimSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-
-	// Foo is an example field of ProjectClaim. Edit ProjectClaim_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	LegalEntity            LegalEntity    `json:"legalEntity"`
+	GCPCredentialSecret    NamespacedName `json:"gcpCredentialSecret"`
+	Region                 string         `json:"region"`
+	GCPProjectID           string         `json:"gcpProjectID,omitempty"`
+	ProjectReferenceCRLink NamespacedName `json:"projectReferenceCRLink,omitempty"`
+	AvailabilityZones      []string       `json:"availabilityZones,omitempty"`
 }
 
 // ProjectClaimStatus defines the observed state of ProjectClaim
 type ProjectClaimStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	Conditions []Condition `json:"conditions"`
+	State      ClaimStatus `json:"state"`
 }
 
 // +kubebuilder:object:root=true
@@ -58,6 +59,22 @@ type ProjectClaimList struct {
 	metav1.ListMeta `json:"metadata,omitempty"`
 	Items           []ProjectClaim `json:"items"`
 }
+
+// ClaimStatus is a valid value from ProjectClaim.Status
+type ClaimStatus string
+
+const (
+	// ClaimStatusPending pending status for a claim
+	ClaimStatusPending ClaimStatus = "Pending"
+	// ClaimStatusPendingProject pending project status for a claim
+	ClaimStatusPendingProject ClaimStatus = "PendingProject"
+	// ClaimStatusReady ready status for a claim
+	ClaimStatusReady ClaimStatus = "Ready"
+	// ClaimStatusError error status for a claim
+	ClaimStatusError ClaimStatus = "Error"
+	// ClaimStatusVerification pending verification status for a claim
+	ClaimStatusVerification ClaimStatus = "Verification"
+)
 
 func init() {
 	SchemeBuilder.Register(&ProjectClaim{}, &ProjectClaimList{})

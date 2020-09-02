@@ -25,18 +25,35 @@ import (
 
 // ProjectReferenceSpec defines the desired state of ProjectReference
 type ProjectReferenceSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-
-	// Foo is an example field of ProjectReference. Edit ProjectReference_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	GCPProjectID       string         `json:"gcpProjectID,omitempty"`
+	ProjectClaimCRLink NamespacedName `json:"projectClaimCRLink"`
+	LegalEntity        LegalEntity    `json:"legalEntity"`
 }
 
 // ProjectReferenceStatus defines the observed state of ProjectReference
 type ProjectReferenceStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	Conditions []Condition           `json:"conditions"`
+	State      ProjectReferenceState `json:"state,omitempty"`
 }
+
+// ProjectReferenceState is a valid value from ProjectReference.Status
+type ProjectReferenceState string
+
+// ProjectReferenceNamespace namespace, where ProjectReference CRs will be created
+const (
+	ProjectReferenceNamespace string = "gcp-project-operator"
+)
+
+const (
+	// ProjectReferenceStatusCreating creating status for a ProjectReference CR
+	ProjectReferenceStatusCreating ProjectReferenceState = "Creating"
+	// ProjectReferenceStatusReady ready status for a ProjectReference CR
+	ProjectReferenceStatusReady ProjectReferenceState = "Ready"
+	// ProjectReferenceStatusError error status for a ProjectReference CR
+	ProjectReferenceStatusError ProjectReferenceState = "Error"
+	// ProjectReferenceStatusVerification pending verification status for a ProjectReference CR
+	ProjectReferenceStatusVerification ProjectReferenceState = "Verification"
+)
 
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
